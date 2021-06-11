@@ -66,7 +66,7 @@ struct main_interface: View {
         List(avm.articles,id: \.id) {
                 thread in
             NavigationLink(
-                destination: sheet1(aid:thread.id ?? "",title:thread.title,content:thread.content,avm: articlevm(id: thread.id ?? "")),
+                destination: sheet1(aid:thread.id ?? "",title:thread.title,content:thread.content,from: thread.from,avm: articlevm(id: thread.id ?? "")),
                 label: {
                     VStack(alignment:.leading){
                     Text(thread.from)
@@ -89,17 +89,25 @@ struct sheet1: View  {
    var aid: String
     var title: String
     var content: String
+    var from: String
     @ObservedObject var avm: articlevm
   
     
    
     
     var body: some View{
+       
         NavigationView{
-        VStack{
-           
             
+                VStack(alignment: .leading){
+            
+           
+             Text(from)
+                .font(.system(size: 15))
             Text(content)
+                .font(.system(size: 32))
+            
+          /*
             List(avm.replys,id: \.id){
                 thread in
                 VStack(alignment:.leading){
@@ -109,9 +117,22 @@ struct sheet1: View  {
                     .font(.system(size: 32))
                 }
             }
+ */
+                    ForEach(avm.replys, id: \.id){ thread in
+                        VStack(alignment:.leading){
+                        Text(thread.from)
+                            .font(.system(size: 15))
+                        Text(thread.content)
+                            .font(.system(size: 32))
+                        }
+                    }
+                Spacer()
         }
+            
         }
-        .navigationTitle(title)
+        
+        
+        .navigationBarTitle(title)
         .navigationBarTitleDisplayMode(.inline)
     }
 }
