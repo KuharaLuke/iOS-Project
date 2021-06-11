@@ -6,12 +6,34 @@
 //
 
 import SwiftUI
+import FirebaseFirestoreSwift
+import Firebase
+
+struct article:Codable, Identifiable {
+    @DocumentID var id: String?
+    let title: String
+    let from: String
+    let content: String
+    
+}
+
+struct articlereply:Codable, Identifiable {
+    @DocumentID var id: String?
+    let from: String
+    let content: String
+    
+}
 
 struct Thread: Identifiable {
     let name: String
     let content: String
     let id = UUID()
 }
+
+
+
+
+/*
 private var threads = [
     Thread(name: "NTUT",content:"Some words"),
     Thread(name: "WILL NOT",content:"Some words"),
@@ -19,7 +41,7 @@ private var threads = [
     Thread(name: "STUDENTS",content:"Some words"),
     Thread(name: "A BREAK",content:"Some words")
 ]
-
+*/
 /*
 struct main_interface: View {
     
@@ -38,30 +60,55 @@ struct main_interface: View {
 struct main_interface: View {
     
     @Binding var showMenu:Bool
-    
+    @ObservedObject var avm = articlevm()
     var body: some View {
-        List(threads,id: \.id) {
+        
+        List(avm.articles,id: \.id) {
                 thread in
             NavigationLink(
-                destination: sheet1(title:thread.name,content:thread.content),
+                destination: sheet1(aid:thread.id ?? "",title:thread.title,content:thread.content,avm: articlevm(id: thread.id ?? "")),
                 label: {
-                    Text(thread.name)
+                    VStack(alignment:.leading){
+                    Text(thread.from)
+                        .font(.system(size: 15))
+                        
+                    Text(thread.title)
+                        .font(.system(size: 32))
+                    
+                    }
                     
                     
                 })
         }
+ 
     }
 }
 
 
 struct sheet1: View  {
+   var aid: String
     var title: String
     var content: String
+    @ObservedObject var avm: articlevm
+  
+    
+   
+    
     var body: some View{
         NavigationView{
         VStack{
+           
             
             Text(content)
+            List(avm.replys,id: \.id){
+                thread in
+                VStack(alignment:.leading){
+                Text(thread.from)
+                    .font(.system(size: 15))
+                Text(thread.content)
+                    .font(.system(size: 32))
+                }
+            }
         }
         }
         .navigationTitle(title)
