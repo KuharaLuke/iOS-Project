@@ -61,7 +61,10 @@ struct main_interface: View {
     
     @Binding var showMenu:Bool
     @ObservedObject var avm = articlevm()
+    @ObservedObject var acvm = accountvm()
     var body: some View {
+        
+       
         
         List(avm.articles,id: \.id) {
                 thread in
@@ -115,23 +118,20 @@ struct sheet1: View  {
                     .font(.system(size: 15))
                 Text(thread.content)
                     .font(.system(size: 32))
-                }
+                
             }
  */
                     ForEach(avm.replys, id: \.id){ thread in
-                        VStack(alignment:.leading){
                         Text(thread.from)
                             .font(.system(size: 15))
                         Text(thread.content)
                             .font(.system(size: 32))
-                        }
+                       
                     }
                 Spacer()
+                }
         }
             
-        }
-        
-        
         .navigationBarTitle(title)
         .navigationBarTitleDisplayMode(.inline)
     }

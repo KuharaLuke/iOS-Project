@@ -9,6 +9,28 @@ import SwiftUI
 
 struct ContentView: View {
     @State var showMenu = false
+    @EnvironmentObject var acvm : accountvm
+    
+    private func item() -> some View{
+        return Group{
+            if self.acvm.issignin{
+              NavigationLink(
+                    destination: Text("Destination"),
+                    label: {
+                        Image(systemName: "plus")
+                    })
+            }
+            else{
+            NavigationLink(
+                    destination: loginview(),
+                    label: {
+                        Image(systemName: "plus")
+                    })
+            }
+            
+        
+    }
+    }
     
     var body: some View {
         let drag = DragGesture()
@@ -24,11 +46,13 @@ struct ContentView: View {
                 ZStack(alignment:.leading){
                    
 
-                           
+                    
                                     main_interface(showMenu: self.$showMenu)
                                         .frame(width: geometry.size.width, height: geometry.size.height)
                                         .offset(x: self.showMenu ? geometry.size.width/2 : 0)
                                         .disabled(self.showMenu ? true : false)
+                    
+                    
                              
                         
                     
@@ -37,6 +61,7 @@ struct ContentView: View {
                         sidemenu()
                             .frame(width: geometry.size.width/1.5, alignment: .leading)
                             .transition(.move(edge: .leading))
+                        
                     }
 
                 }
@@ -52,7 +77,15 @@ struct ContentView: View {
                                     Image(systemName: "line.horizontal.3")
                                         .imageScale(.large)
                                 }
-                            ))
+                            ),
+            trailing: (
+                item()
+                )
+            
+            
+            )
+            
+            
 }
     }
 }
