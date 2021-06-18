@@ -15,7 +15,7 @@ struct ContentView: View {
         return Group{
             if self.acvm.issignin{
               NavigationLink(
-                    destination: Text("Destination"),
+                destination: createarticle(nickname: acvm.session!.displayname),
                     label: {
                         Image(systemName: "plus")
                     })

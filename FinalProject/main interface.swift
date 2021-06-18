@@ -33,6 +33,8 @@ struct Thread: Identifiable {
 
 
 
+
+
 /*
 private var threads = [
     Thread(name: "NTUT",content:"Some words"),
@@ -94,13 +96,30 @@ struct sheet1: View  {
     var content: String
     var from: String
     @ObservedObject var avm: articlevm
+    @EnvironmentObject var acvm : accountvm
   
     
-   
+    private func item() -> some View{
+        return Group{
+            if self.acvm.issignin{
+            NavigationLink(
+                destination: replyarticle(title: title, id: aid, from: acvm.session!.displayname),
+              label: {
+                  Image(systemName: "plus")
+              })
+            }
+            else{
+                NavigationLink(
+                        destination: loginview(),
+                        label: {
+                            Image(systemName: "plus")
+                        })
+            }
+    }
+    }
     
     var body: some View{
        
-        NavigationView{
             
                 VStack(alignment: .leading){
             
@@ -130,9 +149,78 @@ struct sheet1: View  {
                     }
                 Spacer()
                 }
-        }
-            
         .navigationBarTitle(title)
         .navigationBarTitleDisplayMode(.inline)
+                .navigationBarItems(trailing: item())
+    }
+}
+
+
+struct createarticle: View{
+    @ObservedObject var avm = articlevm()
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    @State private var showAlert = false
+    var nickname: String
+    @State var title: String = ""
+    @State var content: String = ""
+    var body: some View{
+        VStack(alignment:.leading){
+            Text("Title:")
+            TextField("title",text:$title)
+            Text("Content:")
+                .padding([.top],20)
+            TextField("content",text:$content)
+            Spacer()
+        }
+        .navigationBarItems(trailing: Button(action: {
+            if avm.uploadarticle(title: title, content: content, nickname: nickname){
+                showAlert = true
+            }
+        }){
+            Image(systemName: "paperplane.fill")
+        })
+        .alert(isPresented: $showAlert){
+            () -> Alert in
+            return Alert(title: Text("Upload success"), dismissButton: .default(Text("OK"),action:{
+                self.mode.wrappedValue.dismiss()
+            } ))
+        }
+        
+    }
+    
+}
+
+struct  replyarticle: View {
+    var title: String
+    var id: String
+    var from: String
+    @State var content: String = ""
+    @ObservedObject var avm = articlevm()
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
+    @State private var showAlert = false
+    var body: some View{
+        VStack(alignment:.leading){
+            Text("Content:")
+            TextField("content",text:$content)
+            Spacer()
+        }
+        .navigationBarTitle(Text(title))
+        .navigationBarItems(trailing: Button(action:{
+            if avm.uploadreply(id: id, content: content, from: from){
+                showAlert = true
+            }
+            
+        }){
+            
+            Image(systemName: "paperplane.fill")
+           
+            
+        })
+        .alert(isPresented: $showAlert){
+            () -> Alert in
+            return Alert(title: Text("reply success"), dismissButton: .default(Text("OK"),action:{
+                self.mode.wrappedValue.dismiss()
+            } ))
+        }
     }
 }
