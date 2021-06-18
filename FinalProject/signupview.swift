@@ -13,7 +13,9 @@ struct signupview: View{
     @State var repassword: String = ""
     @State var nickename: String = ""
     @EnvironmentObject var acvm : accountvm
+    @Environment(\.presentationMode) var mode: Binding<PresentationMode>
     @State var signupstate: Bool = false
+    @State private var showAlert = false
     var body: some View{
         VStack{
         VStack(alignment:.leading){
@@ -27,16 +29,28 @@ struct signupview: View{
             TextField("re-password",text:$repassword)
         }
         .padding([.leading],30)
-            NavigationLink(destination:loginview()
-                            .navigationBarHidden(true)
-                            .navigationBarBackButtonHidden(true)
-                           ,isActive: $acvm.signupstatus){
-                Button(action: {
-                 acvm.signup(email: email, password: password, nickname: nickename)
-                   
-                }, label: {
-                    Text("Signup")
-                })
+            Button(action: {
+                
+                acvm.signup(email: email, password: password, nickname: nickename)
+                DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+               if acvm.issignupfin(fin: acvm.signupisfinish){
+                showAlert = true
+               }else{
+                print("sign up thread fail")
+               }
+                }
+            }, label: {
+                Text("Button")
+            })
+            .alert(isPresented: $showAlert){
+                () -> Alert in
+                if acvm.signupstatus {
+                    return Alert(title: Text("Create account Success"),dismissButton: .default(Text("OK"),action:{
+                        self.mode.wrappedValue.dismiss()
+                    }))
+                }else{
+                    return Alert(title: Text("Fail to create account"))
+                }
             }
             
         }

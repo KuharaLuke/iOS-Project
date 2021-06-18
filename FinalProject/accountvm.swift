@@ -15,6 +15,8 @@ class accountvm: ObservableObject{
     @Published var issignin: Bool = false
     @Published var session: User?
     @Published var signupstatus: Bool = false
+    @Published var signupisfinish: Bool = false
+    
     
     
     
@@ -27,7 +29,7 @@ class accountvm: ObservableObject{
             print(error)
         }else{
             self.issignin = true
-            self.signupstatus = false
+            //self.signupstatus = false
         }
         
         if let user = self.auth.currentUser{
@@ -39,25 +41,32 @@ class accountvm: ObservableObject{
     }
     
     
-  func signup(email: String, password: String, nickname: String){
-        var status: Bool = false
-        auth.createUser(withEmail: email, password: password){
-            result, error in
+    func signup(email: String, password: String, nickname: String) {
+            self.auth.createUser(withEmail: email, password: password){
+           [weak self] result, error in
             guard let user = result?.user,
                   error == nil else{
                 print(error?.localizedDescription)
                 return
             }
-            self.signupstatus = true
-            let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
-            changeRequest?.displayName = nickname
-            changeRequest?.commitChanges(completion: { error in
-                guard error == nil else {
-                       print(error?.localizedDescription)
-                       return
-                   }
-            })
+                self?.signupstatus = true
+                let changeRequest = Auth.auth().currentUser?.createProfileChangeRequest()
+                changeRequest?.displayName = nickname
+                changeRequest?.commitChanges(completion: { error in
+                    guard error == nil else {
+                           print(error?.localizedDescription)
+                           return
+                       }
+                })
+            
+        
         }
+        self.signupisfinish = true
+    }
+    
+    
+    func issignupfin(fin: Bool) -> Bool{
+        return self.signupstatus
     }
     
     
