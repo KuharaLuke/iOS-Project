@@ -43,7 +43,7 @@ class articlevm: ObservableObject{
             self.replys = snapshot.documents.compactMap { snapshot in
                 try? snapshot.data(as: articlereply.self)
                     }
-           
+
             
         }
         

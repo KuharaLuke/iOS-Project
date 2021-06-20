@@ -31,6 +31,8 @@ struct Thread: Identifiable {
 }
 
 
+
+
 struct main_interface: View {
     
     @Binding var showMenu:Bool
@@ -137,6 +139,7 @@ struct sheet1: View  {
                     }
                 Spacer()
                 }
+
                 .onAppear(){
                     self.avm.getarticlereply(id: aid)
                 }
@@ -213,6 +216,7 @@ struct  replyarticle: View {
                 self.mode.wrappedValue.dismiss()
             } ))
         }
+
     }
 }
 
@@ -254,5 +258,6 @@ struct RefreshScrollview: UIViewRepresentable {
         @objc func update(){
             NotificationCenter.default.post(name: NSNotification.Name("Update"), object: nil)
         }
+
     }
 }
