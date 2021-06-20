@@ -10,19 +10,21 @@ import SwiftUI
 struct ContentView: View {
     @State var showMenu = false
     @EnvironmentObject var acvm : accountvm
-    
+    @State var refreshControl = UIRefreshControl()
+    @ObservedObject var avm = articlevm()
+   
     private func item() -> some View{
         return Group{
             if self.acvm.issignin{
               NavigationLink(
-                    destination: Text("Destination"),
+                destination: createarticle(nickname: acvm.session!.displayname),
                     label: {
                         Image(systemName: "plus")
                     })
             }
             else{
             NavigationLink(
-                    destination: loginview(),
+                destination: loginview(),
                     label: {
                         Image(systemName: "plus")
                     })
@@ -47,7 +49,7 @@ struct ContentView: View {
                    
 
                     
-                                    main_interface(showMenu: self.$showMenu)
+                    RefreshScrollview(showMenu: self.$showMenu,refreshControl: self.$refreshControl)
                                         .frame(width: geometry.size.width, height: geometry.size.height)
                                         .offset(x: self.showMenu ? geometry.size.width/2 : 0)
                                         .disabled(self.showMenu ? true : false)
@@ -87,6 +89,10 @@ struct ContentView: View {
             
             
 }
+        .onAppear{
+            self.avm.getarticle()
+        }
+        
     }
 }
 

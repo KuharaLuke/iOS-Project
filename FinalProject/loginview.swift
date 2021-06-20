@@ -10,6 +10,7 @@ import SwiftUI
 struct loginview: View {
     @State var email: String = ""
     @State var password: String = ""
+    
     @EnvironmentObject var acvm : accountvm
     
     var body: some View{
