@@ -17,11 +17,16 @@ struct loginview: View {
        
         VStack{
         VStack(alignment:.leading){
+            
+            Image("images")
+                .padding([.leading],30)
+            
             Text("Email")
             TextField("Email",text:$email)
             
             Text("password")
-            TextField("password",text:$password)
+            SecureField("password",text:$password)
+                
             
             
         }
@@ -46,6 +51,7 @@ struct loginview: View {
                         Text("Sign up")
                     })
             }
+            .padding([.top],10)
             
         }
         

@@ -85,6 +85,7 @@ struct sheet1: View  {
     var title: String
     var content: String
     var from: String
+    @State var rep: [articlereply] = []
     @ObservedObject var avm : articlevm
     @EnvironmentObject var acvm : accountvm
   
@@ -109,42 +110,33 @@ struct sheet1: View  {
     }
     
     var body: some View{
-       
-            
-                VStack(alignment: .leading){
-            
-           
-             Text(from)
-                .font(.system(size: 15))
-            Text(content)
-                .font(.system(size: 32))
-            
-          /*
-            List(avm.replys,id: \.id){
-                thread in
+        ZStack(alignment: .leading, content: {
+            List(self.rep,id: \.id){
+                res in
                 VStack(alignment:.leading){
-                Text(thread.from)
-                    .font(.system(size: 15))
-                Text(thread.content)
-                    .font(.system(size: 32))
+                    Text(res.from)
+                       .font(.system(size: 15))
+                    Text(res.content)
+                       .font(.system(size: 32))
+                }
+                
+               
                 
             }
- */
-                    ForEach(avm.replys, id: \.id){ thread in
-                        Text(thread.from)
-                            .font(.system(size: 15))
-                        Text(thread.content)
-                            .font(.system(size: 32))
-                       
-                    }
-                Spacer()
-                }
-
+            Spacer()
+        })
+        .listStyle(InsetGroupedListStyle())
                 .onAppear(){
                     self.avm.getarticlereply(id: aid)
+                    self.rep.append(articlereply(id:aid,from: from, content: content))
+                    for i in 0..<avm.replys.count{
+                        self.rep.append(articlereply(id:avm.replys[i].id,from: avm.replys[i].from, content: avm.replys[i].content))
+                        //print(avm.replys[i].from)
+                       // print(avm.replys[i].content)
+                    }
+                    print(self.rep)
                 }
-        .navigationBarTitle(title)
-        .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitle(title)
                 .navigationBarItems(trailing: item())
     }
 }
